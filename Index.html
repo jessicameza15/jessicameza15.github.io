@@ -1,2 +1,161 @@
-Hello.
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jessica Meza - Home</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter font --><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Use Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a0815; /* Darker pink-purple background */
+            color: #F8E8F5; /* Lighter pink text */
+        }
+        /* Simple gradient animation for hero */
+        .gradient-text {
+            background: linear-gradient(to right, #ec4899, #f472b6, #fbcfe8); /* Pink gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        .bg-pink-850 {
+            background-color: #3f1035; /* Custom darker pink for cards */
+        }
+        .text-pink-450 {
+            color: #f0abfc; /* Custom lighter pink for highlights */
+        }
+        .hover\:text-pink-450:hover {
+            color: #f0abfc;
+        }
+        .bg-pink-150 {
+            background-color: #fce7f3; /* Custom light pink for skill tags */
+        }
+        .text-pink-950 {
+            color: #4a044e; /* Custom dark pink for skill tag text */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Container --><div class="max-w-4xl mx-auto p-6 md:p-12">
+
+        <!-- Header / Hero Section --><header class="text-center mb-16 md:mb-24">
+            <h1 class="text-5xl md:text-7xl font-bold mb-4">
+                <span class="gradient-text">Jessica Meza</span>
+            </h1>
+            <!-- 
+              EDIT THIS: 
+              Update the headline below with your professional title (e.g., "Software Developer", "Computer Science Student", etc.)
+            --><p class="text-xl md:text-2xl text-pink-200">
+                Aspiring Software Developer | Computer Science Student
+            </p>
+            <!-- Social Links --><div class="flex justify-center space-x-6 mt-8">
+                <a href="https://www.linkedin.com/in/jessica-meza-5j6m8z9/" target="_blank" rel="noopener noreferrer" class="text-pink-200 hover:text-pink-450 transition-colors">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M19.335 19.335H15.67v-5.54c0-1.32-.024-3.02-1.84-3.02-1.84 0-2.122 1.438-2.122 2.925v5.635H8.04V8.67H11.5v1.56h.05c.475-.897 1.635-1.84 3.45-1.84 3.69 0 4.37 2.43 4.37 5.58v6.465zM4.67 6.83c-1.104 0-2-.896-2-2s.896-2 2-2 2 .896 2 2-.896 2-2 2zM2.67 8.67h4v10.665h-4V8.67z" clip-rule="evenodd"/>
+                    </svg>
+                </a>
+                <!-- 
+                  EDIT THIS: 
+                  Add your GitHub profile URL here
+                --><a href="#" target="_blank" rel="noopener noreferrer" class="text-pink-200 hover:text-white transition-colors">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.165 6.839 9.49.5.092.682-.217.682-.483 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.53 2.34 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.951 0-1.093.39-1.988 1.03-2.688-.103-.253-.446-1.27.098-2.65 0 0 .84-.27 2.75 1.02A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.29 2.747-1.02 2.747-1.02.546 1.38.201 2.397.1 2.65.64.7 1.03 1.595 1.03 2.688 0 3.85-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.135 20.165 22 16.418 22 12 22 6.477 17.523 2 12 2z" clip-rule="evenodd"/>
+                    </svg>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content --><main>
+            <!-- About Me Section --><section class="mb-16 md:mb-24">
+                <h2 class="text-3xl font-bold mb-6 text-pink-450">About Me</h2>
+                <!-- 
+                  EDIT THIS: 
+                  Replace this paragraph with your "About Me" summary from LinkedIn or a new one.
+                --><p class="text-lg leading-relaxed text-pink-100">
+                    Hello! I'm a passionate and driven computer science student with a strong interest in full-stack web development and user-centric design. I'm currently honing my skills in JavaScript, React, and Node.js while seeking opportunities to contribute to real-world projects. I love solving complex problems and learning new technologies.
+                </p>
+            </section>
+
+            <!-- My Web Apps Section --><section class="mb-16 md:mb-24">
+                <h2 class="text-3xl font-bold mb-8 text-pink-450">My Web Apps</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- App Card 1 --><!-- 
+                      EDIT THIS: 
+                      Update the href="...", title, and description for your app.
+                    --><a href="#" class="block bg-pink-850 rounded-lg p-6 card-hover shadow-lg">
+                        <h3 class="text-xl font-semibold mb-2 text-white">Project Title 1</h3>
+                        <p class="text-pink-300">A brief, engaging description of what this web app does and what technologies you used.</p>
+                    </a>
+
+                    <!-- App Card 2 --><!-- 
+                      EDIT THIS: 
+                      Update the href="...", title, and description for your app.
+                    --><a href="#" class="block bg-pink-850 rounded-lg p-6 card-hover shadow-lg">
+                        <h3 class="text-xl font-semibold mb-2 text-white">Project Title 2</h3>
+                        <p class="text-pink-300">A brief, engaging description of what this web app does and what technologies you used.</p>
+                    </a>
+
+                    <!-- App Card 3 --><!-- 
+                      EDIT THIS: 
+                      Add more cards as you build more apps!
+                    --><a href="#" class="block bg-pink-850 rounded-lg p-6 card-hover shadow-lg">
+                        <h3 class="text-xl font-semibold mb-2 text-white">Coming Soon...</h3>
+                        <p class="text-pink-300">I'm currently working on a new and exciting project. Check back soon for updates!</p>
+                    </a>
+
+                </div>
+            </section>
+
+            <!-- Skills & Education Section --><div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                <!-- Skills --><section>
+                    <h2 class="text-3xl font-bold mb-6 text-pink-450">Skills</h2>
+                    <!-- 
+                      EDIT THIS: 
+                      Update this list with your actual skills.
+                    --><div class="flex flex-wrap gap-3">
+                        <span class="bg-pink-150 text-pink-950 text-sm font-medium px-4 py-1.5 rounded-full">JavaScript</span>
+                        <span class="bg-pink-150 text-pink-950 text-sm font-medium px-4 py-1.5 rounded-full">React</span>
+                        <span class="bg-pink-150 text-pink-950 text-sm font-medium px-4 py-1.5 rounded-full">Node.js</span>
+                        <span class="bg-pink-150 text-pink-950 text-sm font-medium px-4 py-1.5 rounded-full">HTML5</span>
+                        <span class="bg-pink-150 text-pink-950 text-sm font-medium px-4 py-1.5 rounded-full">Tailwind CSS</span>
+                        <span class="bg-pink-150 text-pink-950 text-sm font-medium px-4 py-1.5 rounded-full">Python</span>
+                        <span class="bg-pink-150 text-pink-950 text-sm font-medium px-4 py-1.5 rounded-full">SQL</span>
+                        <span class="bg-pink-150 text-pink-950 text-sm font-medium px-4 py-1.5 rounded-full">Git & GitHub</span>
+                    </div>
+                </section>
+
+                <!-- Education --><section>
+                    <h2 class="text-3xl font-bold mb-6 text-pink-450">Education</h2>
+                    <!-- 
+                      EDIT THIS: 
+                      Update this with your education details.
+                    --><div class="bg-pink-850 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-white">Your University Name</h3>
+                        <p class="text-pink-100 mb-1">Bachelor of Science, Computer Science</p>
+                        <p class="text-pink-200 text-sm">Expected Graduation: May 202X</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer --><footer class="text-center text-pink-500 mt-24">
+            <p>&copy; 2025 Jessica Meza. Built with HTML & Tailwind CSS.</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
 
