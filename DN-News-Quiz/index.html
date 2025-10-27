@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Nebraskan News Quiz</title>
+    
+    <style>
+        /* Basic body and layout styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Quiz container */
+        .quiz-container {
+            width: 100%;
+            max-width: 650px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #question {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* Grid for multiple choice options */
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* General button styling */
+        .btn {
+            font-size: 1rem;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: #e9e9e9;
+            border-color: #bbb;
+        }
+        
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Control buttons (Start/Next) */
+        #controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #start-btn,
+        #next-btn,
+        #restart-btn {
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        #start-btn:hover,
+        #next-btn:hover,
+        #restart-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Styling for correct/incorrect answers */
+        .btn.correct {
+            background-color: #28a745;
+            color: white;
+            border-color: #218838;
+        }
+
+        .btn.wrong {
+            background-color: #dc3545;
+            color: white;
+            border-color: #c82333;
+        }
+        
+        /* Results styling */
+        #results-container h2 {
+            text-align: center;
+        }
+        
+        #score-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Utility class to hide elements */
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Daily Nebraskan News Quiz</h1>
+
+    <div class="quiz-container">
+        <div id="question-container" class="hide">
+            <div id="question">Question Text</div>
+            <div id="options-container" class="btn-grid">
+                </div>
+        </div>
+
+        <div id="controls">
+            <button id="start-btn" class="start-btn btn">Start</button>
+            <button id="next-btn" class="next-btn btn hide">Next</button>
+        </div>
+        
+        <div id="results-container" class="hide">
+            <h2>Your Score</h2>
+            <p id="score-text"></p>
+            <button id="restart-btn" class="btn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const startButton = document.getElementById('start-btn');
+        const nextButton = document.getElementById('next-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const questionContainerElement = document.getElementById('question-container');
+        const questionElement = document.getElementById('question');
+        const optionsContainerElement = document.getElementById('options-container');
+        const resultsContainerElement = document.getElementById('results-container');
+        const scoreTextElement = document.getElementById('score-text');
+
+        let shuffledQuestions, currentQuestionIndex, score;
+        const totalQuestionsForQuiz = 5;
+
+        // --- Event Listeners ---
+        startButton.addEventListener('click', startQuiz);
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            setNextQuestion();
+        });
+        restartButton.addEventListener('click', startQuiz);
+
+        // --- Quiz Data ---
+        // The JSON data is now a JavaScript array
+        const allQuestions = [
+            {
+                "question": "The Bar, a staple of the Lincoln college bar scene, first opened in 2010.",
+                "type": "True/False",
+                "options": ["True", "False"],
+                "answer": "False"
+            },
+            {
+                "question": "Partial owner Seth Regan said he always hated the nickname 'The bar, The Bar' and still fights against its use.",
+                "type": "True/False",
+                "options": ["True", "False"],
+                "answer": "False"
+            },
+            {
+                "question": "The University of Nebraska-Lincoln is proposing to merge its journalism and sports media and communications majors.",
+                "type": "True/False",
+                "options": ["True", "False"],
+                "answer": "False"
+            },
+            {
+                "question": "According to the article, three broadcasting professors are expected to retire from the university.",
+                "type": "True/False",
+                "options": ["True", "False"],
+                "answer": "True"
+            },
+            {
+                "question": "The ASUN resolution about the McCook ICE detention facility condemns both the name 'Cornhusker Clink' and the existence of the facility itself.",
+                "type": "True/False",
+                "options": ["True", "False"],
+                "answer": "False"
+            },
+            {
+                "question": "The University of Nebraska-Lincoln announced it would take legal action against the use of the 'Cornhusker' name for the detention facility.",
+                "type": "True/False",
+                "options": ["True", "False"],
+                "answer": "False"
+            },
+            {
+                "question": "As part of other business, ASUN passed bills for a campus-wide Narcan awareness campaign.",
+                "type": "True/False",
+                "options": ["True", "False"],
+                "answer": "True"
+            },
+            {
+                "question": "The journalism major is the largest program in the College of Journalism and Mass Communications.",
+                "type": "True/False",
+                "options": ["True", "False"],
+                "answer": "False"
+            },
+            {
+                "question": "Who is the current manager of The Bar?",
+                "type": "Multiple Choice",
+                "options": ["Seth Regan", "Gregg List", "Chloe Best", "Barney McCoy"],
+                "answer": "Chloe Best"
+            },
+            {
+                "question": "Chloe Best, the manager of The Bar, is a college student majoring in what field?",
+                "type": "Multiple Choice",
+                "options": ["Journalism", "Hospitality", "Accounting", "Broadcasting"],
+                "answer": "Accounting"
+            },
+            {
+                "question": "How long had Chloe Best been working at The Bar before she became the manager?",
+                "type": "Multiple Choice",
+                "options": ["8 months", "2 years", "3 years", "She was hired directly as the manager."],
+                "answer": "8 months"
+            },
+            {
+                "question": "According to the article, which of these College of Journalism and Mass Communications majors has the most students?",
+                "type": "Multiple Choice",
+                "options": ["Journalism", "Advertising and Public Relations", "Broadcasting", "Sports Media and Communications"],
+                "answer": "Advertising and Public Relations"
+            },
+            {
+                "question": "Rick Alloway, a 40-year professor who applied for the Voluntary Separation Incentive Program, teaches in which program?",
+                "type": "Multiple Choice",
+                "options": ["Journalism", "Advertising", "Broadcasting", "Spanish"],
+                "answer": "Broadcasting"
+            },
+            {
+                "question": "When is the Board of Regents expected to make its final decision regarding the university's budget cuts?",
+                "type": "Multiple Choice",
+                "options": ["October 24", "November 1", "October 30", "December 5"],
+                "answer": "December 5"
+            },
+            {
+                "question": "What was the final vote count for the ASUN resolution to condemn the 'Cornhusker Clink' name?",
+                "type": "Multiple Choice",
+                "options": ["23-5", "25-3", "15-13", "It passed unanimously."],
+                "answer": "23-5"
+            },
+            {
+                "question": "Who first announced the 'Cornhusker Clink' name in a social media post?",
+                "type": "Multiple Choice",
+                "options": ["Governor Jim Pillen", "Senator Madie Beasley", "Homeland Security Secretary Kristi Noem", "Rob Jeffreys"],
+                "answer": "Homeland Security Secretary Kristi Noem"
+            },
+            {
+                "question": "How much revenue does the state of Nebraska expect to net annually from the McCook ICE facility?",
+                "type": "Multiple Choice",
+                "options": ["$2.5 million", "$5.9 million", "$14.25 million", "$25 million"],
+                "answer": "$14.25 million"
+            },
+            {
+                "question": "Which of the following is NOT a name of an ICE detention facility mentioned in the article?",
+                "type": "Multiple Choice",
+                "options": ["Alligator Alcatraz", "Husker Hold'em", "Speedway Slammer", "Cornhusker Clink"],
+                "answer": "Husker Hold'em"
+            },
+            {
+                "question": "According to owner Seth Regan, how did 'The Bar' get its name?",
+                "type": "Multiple Choice",
+                "options": [
+                    "It was named after a famous bar in his hometown.",
+                    "It won a naming contest among UNL students.",
+                    "A girlfriend suggested it because they were always saying they had to 'work on the bar.'",
+                    "It was the result of a professional marketing study."
+                ],
+                "answer": "A girlfriend suggested it because they were always saying they had to 'work on the bar.'"
+            },
+            {
+                "question": "A lawsuit to stop the prison's transformation was filed by whom?",
+                "type": "Multiple Choice",
+                "options": [
+                    "The University of Nebraska-Lincoln",
+                    "ASUN student government",
+                    "13 McCook residents",
+                    "The Nebraska Legislature"
+                ],
+                "answer": "13 McCook residents"
+            }
+        ];
+
+        // --- Functions ---
+
+        /**
+         * Starts the quiz by resetting variables and showing the first question.
+         */
+        function startQuiz() {
+            // Hide start button and results, show quiz
+            startButton.classList.add('hide');
+            resultsContainerElement.classList.add('hide');
+            nextButton.classList.add('hide'); // Ensure next is hidden
+            questionContainerElement.classList.remove('hide');
+            
+            // Reset score and question index
+            score = 0;
+            currentQuestionIndex = 0;
+            
+            // Shuffle all questions and take the first 5
+            shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5).slice(0, totalQuestionsForQuiz);
+            
+            setNextQuestion();
+        }
+
+        /**
+         * Clears the previous question state and displays the new question.
+         */
+        function setNextQuestion() {
+            resetState();
+            showQuestion(shuffledQuestions[currentQuestionIndex]);
+        }
+
+        /**
+         * Populates the question and answer options on the page.
+         */
+        function showQuestion(questionData) {
+            questionElement.innerText = questionData.question;
+            
+            // Create a button for each option
+            questionData.options.forEach(option => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.classList.add('btn');
+                button.addEventListener('click', selectAnswer);
+                optionsContainerElement.appendChild(button);
+            });
+        }
+
+        /**
+         * Clears the question text and answer buttons.
+         */
+        function resetState() {
+            nextButton.classList.add('hide');
+            while (optionsContainerElement.firstChild) {
+                optionsContainerElement.removeChild(optionsContainerElement.firstChild);
+            }
+        }
+
+        /**
+         * Handles the user's click on an answer option.
+         */
+        function selectAnswer(e) {
+            const selectedButton = e.target;
+            const correct = selectedButton.innerText === shuffledQuestions[currentQuestionIndex].answer;
+            
+            // Update score
+            if (correct) {
+                score++;
+            }
+            
+            // Apply visual feedback (correct/wrong)
+            Array.from(optionsContainerElement.children).forEach(button => {
+                setStatusClass(button, button.innerText === shuffledQuestions[currentQuestionIndex].answer);
+                button.disabled = true; // Disable all buttons
+            });
+            
+            // Show 'Next' button or 'Finish'
+            if (shuffledQuestions.length > currentQuestionIndex + 1) {
+                nextButton.classList.remove('hide');
+            } else {
+                // End of quiz
+                showResults();
+            }
+        }
+
+        /**
+         * Displays the final score and restart button.
+         */
+        function showResults() {
+            questionContainerElement.classList.add('hide');
+            nextButton.classList.add('hide');
+            resultsContainerElement.classList.remove('hide');
+            scoreTextElement.innerText = `You scored ${score} out of ${totalQuestionsForQuiz}!`;
+        }
+
+        /**
+         * Applies the 'correct' or 'wrong' class to a button for styling.
+         */
+        function setStatusClass(element, isCorrect) {
+            clearStatusClass(element);
+            if (isCorrect) {
+                element.classList.add('correct');
+            } else {
+                element.classList.add('wrong');
+            }
+        }
+
+        /**
+         * Removes 'correct' and 'wrong' classes from a button.
+         */
+        function clearStatusClass(element) {
+            element.classList.remove('correct');
+            element.classList.remove('wrong');
+        }
+    </script>
+</body>
+</html>
