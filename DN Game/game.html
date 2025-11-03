@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Nebraskan: The Rookie Reporter</title>
+    <style>
+        /* --- Nebraska Theme: Scarlet and Cream --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fdfdf5; /* UNL Cream */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        #game-container {
+            width: 600px;
+            margin: 20px;
+            padding: 25px;
+            background-color: #ffffff; /* White card for contrast */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+        #logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #logo-container img {
+            max-width: 150px;
+            height: auto;
+        }
+        h1, h2, h3 {
+            color: #d00000; /* UNL Scarlet */
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        h1 {
+            text-align: center;
+        }
+        #assignment-board button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            background-color: #fff;
+            border: 2px solid #e0e0e0;
+            color: #333;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        #assignment-board button:hover {
+            background-color: #fdfdf5; /* Cream hover */
+            border-color: #d00000; /* Scarlet border on hover */
+        }
+        #game-interface {
+            display: none; /* Hidden until an assignment is chosen */
+        }
+        #action-buttons button {
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 10px;
+            background-color: #d00000; /* UNL Scarlet */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        #action-buttons button:hover {
+            background-color: #a00000; /* Darker Scarlet */
+        }
+        #action-buttons button:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+        
+        /* --- NEW STYLE for the secondary 'Play Again' button --- */
+        #action-buttons button.btn-secondary {
+            background-color: #6c6c6c; /* Neutral gray */
+        }
+        #action-buttons button.btn-secondary:hover {
+            background-color: #444;
+        }
+
+        #status-bar {
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        #status-bar span {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #story-output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f7ff;
+            border: 1px solid #bde;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div id="logo-container">
+            <img src="https://lh3.googleusercontent.com/pw/AP1GczM_tY_1yW9zX6i3qT0b5zP6mK2v7w8p2k5k_J2X5l9f6a_0s4q7rC8k8J1g3p2v5v0a0c9g4q2a3s0c5g5e7v2k7j8x3c6g4e4o5v9o8f3d6c4e5t5u7i8o9p-b=w1280-h720" alt="Daily Nebraskan Logo">
+        </div>
+        <h1>The Daily Nebraskan</h1>
+
+        <div id="assignment-board">
+            <h2>Editor's Assignment Board</h2>
+            <button onclick="startGame('asun')">
+                <strong>New Story:</strong> Cover the ASUN student government meeting.
+            </button>
+            <button onclick="startGame('research')">
+                <strong>New Story:</strong> Interview a professor about their new climate research.
+            </button>
+            <button onclick="startGame('sports')">
+                <strong>New Story:</strong> Write a recap of the last Husker volleyball game.
+            </button>
+        </div>
+
+        <div id="game-interface">
+            <h2 id="assignment-title"></h2>
+            
+            <div id="status-bar">
+                <span id="time-left">Time Left: 8 hours</span>
+                <span id="research-level">Research: 0</span>
+                <span id="interview-level">Interviews: 0</span>
+            </div>
+
+            <div id="action-buttons">
+                <h3>Reporter Actions:</h3>
+                <button id="btn-research" onclick="doAction('research')">Do Research (-2 Hours)</button>
+                <button id="btn-interview" onclick="doAction('interview')">Conduct Interview (-3 Hours)</button>
+                <button id="btn-write" onclick="doAction('write')">Write Story (-2 Hours)</button>
+            </div>
+
+            <div id="story-output">
+                <h3>Game Log:</h3>
+                <p id="log-message">Select an action to begin...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Game State ---
+        let gameState = {
+            timeLeft: 8,
+            research: 0,
+            interviews: 0,
+            assignment: null
+        };
+
+        // --- Assignment Database ---
+        const assignments = {
+            'asun': {
+                title: 'ASUN Student Government Meeting',
+                researchNeeded: 2,
+                interviewsNeeded: 1
+            },
+            'research': {
+                title: 'Professor Climate Research',
+                researchNeeded: 1,
+                interviewsNeeded: 2
+            },
+            'sports': {
+                title: 'Husker Volleyball Recap',
+                researchNeeded: 3,
+                interviewsNeeded: 0
+            }
+        };
+
+        // --- Game Functions ---
+
+        // Starts the game and shows the main interface
+        function startGame(assignmentKey) {
+            gameState.assignment = assignments[assignmentKey];
+            gameState.timeLeft = 8;
+            gameState.research = 0;
+            gameState.interviews = 0;
+
+            document.getElementById('assignment-board').style.display = 'none';
+            document.getElementById('game-interface').style.display = 'block';
+            document.getElementById('assignment-title').innerText = gameState.assignment.title;
+            
+            updateUI();
+            logMessage("New assignment! You have 8 hours to deadline.");
+        }
+
+        // Handles button clicks for actions
+        function doAction(actionType) {
+            let timeCost = 0;
+            let log = "";
+
+            if (actionType === 'research') {
+                timeCost = 2;
+                if (gameState.timeLeft >= timeCost) {
+                    gameState.research++;
+                    gameState.timeLeft -= timeCost;
+                    log = "You spend 2 hours in the library and online. Research level is now " + gameState.research;
+                } else {
+                    log = "Not enough time to research!";
+                }
+            } 
+            else if (actionType === 'interview') {
+                timeCost = 3;
+                if (gameState.timeLeft >= timeCost) {
+                    gameState.interviews++;
+                    gameState.timeLeft -= timeCost;
+                    log = "You spend 3 hours finding and interviewing a source. Interview level is now " + gameState.interviews;
+                } else {
+                    log = "Not enough time for an interview!";
+                }
+            } 
+            else if (actionType === 'write') {
+                timeCost = 2;
+                if (gameState.timeLeft >= timeCost) {
+                    gameState.timeLeft -= timeCost;
+                    finishStory();
+                } else {
+                    log = "Not enough time to write the story!";
+                }
+            }
+
+            if (log) logMessage(log);
+            updateUI();
+        }
+
+        // Calculates the final score and ends the game
+        function finishStory() {
+            const assignment = gameState.assignment;
+            let score = 0;
+            let storyQuality = "Your story is finished. ";
+
+            // Calculate score
+            if (gameState.research >= assignment.researchNeeded) {
+                score++;
+            }
+            if (gameState.interviews >= assignment.interviewsNeeded) {
+                score++;
+            }
+
+            // Generate feedback
+            if (score === 2) {
+                storyQuality += "It's a fantastic piece with solid facts and great quotes. **Grade: A+** (Front Page!)";
+            } else if (score === 1) {
+                if (gameState.research < assignment.researchNeeded) {
+                    storyQuality += "It has good quotes, but the background facts are weak. **Grade: C** (Buried on page 5).";
+                } else {
+                    storyQuality += "It's well-researched, but lacks a human voice. No quotes! **Grade: C+** (Buried on page 5).";
+                }
+            } else {
+                storyQuality += "It's thin, un-researched, and has no sources. The editor is not happy. **Grade: F** (Spiked).";
+            }
+
+            logMessage(storyQuality);
+            
+            // Disable action buttons
+            document.getElementById('btn-research').disabled = true;
+            document.getElementById('btn-interview').disabled = true;
+            document.getElementById('btn-write').disabled = true;
+
+            // --- *** NEW CODE *** ---
+            // Get the action buttons container
+            const actionButtonsDiv = document.getElementById('action-buttons');
+
+            // --- Add "Apply Now" Button ---
+            const applyButton = document.createElement('button');
+            applyButton.innerText = 'Apply Now!';
+            applyButton.style.marginTop = '15px';
+            applyButton.onclick = () => {
+                // Redirects to the DN application page
+                window.location.href = 'https://www.dailynebraskan.com/site/forms/online_services/apply/apply_to_the_dn/';
+            };
+            actionButtonsDiv.appendChild(applyButton);
+
+            // --- Add "Play Again" Button ---
+            const playAgainButton = document.createElement('button');
+            playAgainButton.innerText = 'Take New Assignment';
+            playAgainButton.style.marginTop = '15px';
+            playAgainButton.classList.add('btn-secondary'); // Apply the gray secondary style
+            playAgainButton.onclick = () => location.reload(); // Simple page reload
+            actionButtonsDiv.appendChild(playAgainButton);
+            // --- *** END NEW CODE *** ---
+        }
+
+        // Updates the status bar (Time, Research, Interviews)
+        function updateUI() {
+            document.getElementById('time-left').innerText = `Time Left: ${gameState.timeLeft} hours`;
+            document.getElementById('research-level').innerText = `Research: ${gameState.research}`;
+            document.getElementById('interview-level').innerText = `Interviews: ${gameState.interviews}`;
+
+            // Disable buttons if not enough time
+            document.getElementById('btn-research').disabled = gameState.timeLeft < 2;
+            document.getElementById('btn-interview').disabled = gameState.timeLeft < 3;
+            document.getElementById('btn-write').disabled = gameState.timeLeft < 2;
+        }
+
+        // Writes a message to the game log
+        function logMessage(message) {
+            document.getElementById('log-message').innerHTML = message; // Use innerHTML to render bold tags
+        }
+    </script>
+
+</body>
+</html>
