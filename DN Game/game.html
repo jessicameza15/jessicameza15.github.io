@@ -15,6 +15,7 @@
             align-items: center;
             min-height: 100vh;
             line-height: 1.6;
+            padding: 20px 0;
         }
         #game-container {
             width: 600px;
@@ -62,11 +63,17 @@
         #game-interface {
             display: none; /* Hidden until an assignment is chosen */
         }
+        
+        /* --- Button Styles --- */
+        #action-buttons h3 {
+            margin-top: 20px;
+        }
         #action-buttons button {
             padding: 10px 15px;
             font-size: 14px;
             font-weight: bold;
             margin-right: 10px;
+            margin-bottom: 10px; /* Added for better wrapping */
             background-color: #d00000; /* UNL Scarlet */
             color: white;
             border: none;
@@ -77,17 +84,27 @@
         #action-buttons button:hover {
             background-color: #a00000; /* Darker Scarlet */
         }
-        #action-buttons button:disabled {
-            background-color: #999;
-            cursor: not-allowed;
-        }
         
-        /* --- NEW STYLE for the secondary 'Play Again' button --- */
+        /* Secondary button style for gray buttons */
         #action-buttons button.btn-secondary {
-            background-color: #6c6c6c; /* Neutral gray */
+            background-color: #6c6c6c;
         }
         #action-buttons button.btn-secondary:hover {
             background-color: #444;
+        }
+        
+        /* Special button style for coffee break */
+        #action-buttons button.btn-special {
+            background-color: #005a9c; /* UNL Blue */
+        }
+         #action-buttons button.btn-special:hover {
+            background-color: #004273;
+        }
+
+        #action-buttons button:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+            opacity: 0.7;
         }
 
         #status-bar {
@@ -98,9 +115,11 @@
             margin-bottom: 20px;
         }
         #status-bar span {
-            display: block;
-            font-size: 18px;
+            display: inline-block; /* Changed for better layout */
+            font-size: 16px;
             font-weight: bold;
+            margin-right: 15px;
+            min-width: 120px; /* Align them a bit */
         }
         #story-output {
             margin-top: 20px;
@@ -115,7 +134,7 @@
 
     <div id="game-container">
         <div id="logo-container">
-            <img src="https://lh3.googleusercontent.com/pw/AP1GczM_tY_1yW9zX6i3qT0b5zP6mK2v7w8p2k5k_J2X5l9f6a_0s4q7rC8k8J1g3p2v5v0a0c9g4q2a3s0c5g5e7v2k7j8x3c6g4e4o5v9o8f3d6c4e5t5u7i8o9p-b=w1280-h720" alt="Daily Nebraskan Logo">
+            <img src="download.jpg" alt="Daily Nebraskan Logo">
         </div>
         <h1>The Daily Nebraskan</h1>
 
@@ -130,6 +149,15 @@
             <button onclick="startGame('sports')">
                 <strong>New Story:</strong> Write a recap of the last Husker volleyball game.
             </button>
+            <button onclick="startGame('concert')">
+                <strong>New Story:</strong> Concert coverage at the Bourbon Theatre.
+            </button>
+            <button onclick="startGame('crime')">
+                <strong>New Story:</strong> Crime report on campus.
+            </button>
+            <button onclick="startGame('opinion')">
+                <strong>New Story:</strong> Opinion piece on the budget cuts.
+            </button>
         </div>
 
         <div id="game-interface">
@@ -139,13 +167,25 @@
                 <span id="time-left">Time Left: 8 hours</span>
                 <span id="research-level">Research: 0</span>
                 <span id="interview-level">Interviews: 0</span>
+                <span id="photo-level">Photos: 0</span>
+                <span id="video-level">Video: 0</span>
+                <span id="social-level">Social: 0</span>
             </div>
 
             <div id="action-buttons">
-                <h3>Reporter Actions:</h3>
+                <h3>Reporting Actions:</h3>
                 <button id="btn-research" onclick="doAction('research')">Do Research (-2 Hours)</button>
-                <button id="btn-interview" onclick="doAction('interview')">Conduct Interview (-3 Hours)</button>
-                <button id="btn-write" onclick="doAction('write')">Write Story (-2 Hours)</button>
+                <button id="btn-interview" onclick="doAction('interview')">Conduct Interview (-1 Hour)</button>
+                <button id="btn-photo" onclick="doAction('photo')">Take Photos (-1 Hour)</button>
+                <button id="btn-video" onclick="doAction('video')">Record Video (-2 Hours)</button>
+                
+                <h3>Other Actions:</h3>
+                <button id="btn-social" onclick="doAction('social')">Create Social Post (-1 Hour)</button>
+                <button id="btn-nap" onclick="doAction('nap')">Take a Nap (-2 Hours)</button>
+                <button id="btn-coffee" class="btn-special" onclick="doAction('coffee')">Coffee Break (-2 Hours, 50% to get an interview)</button>
+                
+                <h3>Final Step:</h3>
+                <button id="btn-write" class="btn-secondary" onclick="doAction('write')">Write Story (-3 Hours)</button>
             </div>
 
             <div id="story-output">
@@ -162,6 +202,11 @@
             timeLeft: 8,
             research: 0,
             interviews: 0,
+            photos: 0,
+            video: 0,
+            social: 0,
+            coffeeBreakTaken: false, 
+            actionsTaken: 0, // --- NEW: Tracks if any action has been taken
             assignment: null
         };
 
@@ -181,6 +226,21 @@
                 title: 'Husker Volleyball Recap',
                 researchNeeded: 3,
                 interviewsNeeded: 0
+            },
+            'concert': {
+                title: 'Concert Coverage at the Bourbon Theatre',
+                researchNeeded: 1, 
+                interviewsNeeded: 1  
+            },
+            'crime': {
+                title: 'Crime Report on Campus',
+                researchNeeded: 3, 
+                interviewsNeeded: 2  
+            },
+            'opinion': {
+                title: 'Opinion Piece on Budget Cuts',
+                researchNeeded: 3, 
+                interviewsNeeded: 0  
             }
         };
 
@@ -192,6 +252,11 @@
             gameState.timeLeft = 8;
             gameState.research = 0;
             gameState.interviews = 0;
+            gameState.photos = 0;
+            gameState.video = 0;
+            gameState.social = 0;
+            gameState.coffeeBreakTaken = false;
+            gameState.actionsTaken = 0; // --- NEW ---
 
             document.getElementById('assignment-board').style.display = 'none';
             document.getElementById('game-interface').style.display = 'block';
@@ -205,35 +270,106 @@
         function doAction(actionType) {
             let timeCost = 0;
             let log = "";
+            let actionCounted = true; // --- NEW ---
 
             if (actionType === 'research') {
                 timeCost = 2;
                 if (gameState.timeLeft >= timeCost) {
                     gameState.research++;
                     gameState.timeLeft -= timeCost;
-                    log = "You spend 2 hours in the library and online. Research level is now " + gameState.research;
+                    log = `You spend 2 hours in the library. Research level is now ${gameState.research}`;
                 } else {
                     log = "Not enough time to research!";
+                    actionCounted = false;
                 }
             } 
             else if (actionType === 'interview') {
-                timeCost = 3;
+                timeCost = 1;
                 if (gameState.timeLeft >= timeCost) {
                     gameState.interviews++;
                     gameState.timeLeft -= timeCost;
-                    log = "You spend 3 hours finding and interviewing a source. Interview level is now " + gameState.interviews;
+                    log = `You spend 1 hour interviewing a source. Interview level is now ${gameState.interviews}`;
                 } else {
                     log = "Not enough time for an interview!";
+                    actionCounted = false;
                 }
-            } 
-            else if (actionType === 'write') {
+            }
+            else if (actionType === 'photo') {
+                timeCost = 1;
+                if (gameState.timeLeft >= timeCost) {
+                    gameState.photos++;
+                    gameState.timeLeft -= timeCost;
+                    log = `You take some great photos for the article. Photos: ${gameState.photos}`;
+                } else {
+                    log = "Not enough time to take photos!";
+                    actionCounted = false;
+                }
+            }
+            else if (actionType === 'video') {
+                timeCost = 2; // Time cost is 2
+                if (gameState.timeLeft >= timeCost) {
+                    gameState.video++;
+                    gameState.timeLeft -= timeCost;
+                    log = `You record some video clips. Video: ${gameState.video}`;
+                } else {
+                    log = "Not enough time to record video!";
+                    actionCounted = false;
+                }
+            }
+            else if (actionType === 'social') {
+                timeCost = 1;
+                if (gameState.timeLeft >= timeCost) {
+                    gameState.social++;
+                    gameState.timeLeft -= timeCost;
+                    log = "You create a social media post to promote the story.";
+                } else {
+                    log = "Not enough time for social media!";
+                    actionCounted = false;
+                }
+            }
+            else if (actionType === 'nap') {
+                timeCost = 2; // Time cost is 2
+                if (gameState.timeLeft >= timeCost) {
+                    gameState.timeLeft -= timeCost;
+                    log = "You take a 2-hour nap in the newsroom. You feel refreshed.";
+                } else {
+                    log = "Not enough time for a nap!";
+                    actionCounted = false;
+                }
+            }
+            else if (actionType === 'coffee') {
                 timeCost = 2;
+                if (!gameState.coffeeBreakTaken && gameState.timeLeft >= timeCost) {
+                    gameState.timeLeft -= timeCost;
+                    gameState.coffeeBreakTaken = true;
+                    if (Math.random() < 0.5) { // 50/50 chance
+                        gameState.interviews++;
+                        log = "You grab coffee and run into a key source! You get a free interview. Interviews: " + gameState.interviews;
+                    } else {
+                        log = "You had coffee, but no unexpected sources. Just a nice break.";
+                    }
+                } else if (gameState.coffeeBreakTaken) {
+                    log = "You already had your coffee break. No more chances for upgrades!";
+                    actionCounted = false;
+                } else {
+                    log = "Not enough time for a coffee break!";
+                    actionCounted = false;
+                }
+            }
+            else if (actionType === 'write') {
+                timeCost = 3;
+                actionCounted = false; // Writing doesn't count as a pre-action
                 if (gameState.timeLeft >= timeCost) {
                     gameState.timeLeft -= timeCost;
                     finishStory();
                 } else {
                     log = "Not enough time to write the story!";
                 }
+            }
+            
+            // --- NEW: Increment action counter if the action was successful ---
+            if(actionCounted) {
+                gameState.actionsTaken++;
             }
 
             if (log) logMessage(log);
@@ -243,59 +379,74 @@
         // Calculates the final score and ends the game
         function finishStory() {
             const assignment = gameState.assignment;
-            let score = 0;
+            let coreScore = 0;
+            let bonusScore = 0;
             let storyQuality = "Your story is finished. ";
 
-            // Calculate score
+            // Calculate core score
             if (gameState.research >= assignment.researchNeeded) {
-                score++;
+                coreScore++;
             }
             if (gameState.interviews >= assignment.interviewsNeeded) {
-                score++;
+                coreScore++;
             }
+            
+            // Calculate bonus score
+            if (gameState.photos > 0) bonusScore++;
+            if (gameState.video > 0) bonusScore++;
+            if (gameState.social > 0) bonusScore++;
+
 
             // Generate feedback
-            if (score === 2) {
-                storyQuality += "It's a fantastic piece with solid facts and great quotes. **Grade: A+** (Front Page!)";
-            } else if (score === 1) {
-                if (gameState.research < assignment.researchNeeded) {
-                    storyQuality += "It has good quotes, but the background facts are weak. **Grade: C** (Buried on page 5).";
+            if (coreScore === 2) { // Good core story
+                if (bonusScore === 3) {
+                    storyQuality += "It's a fantastic, well-researched piece with great multimedia. **Grade: A+** (Front Page & DN social media!)";
+                } else if (bonusScore > 0) {
+                    storyQuality += "It's a solid, well-researched story with some good extras. **Grade: A**";
                 } else {
-                    storyQuality += "It's well-researched, but lacks a human voice. No quotes! **Grade: C+** (Buried on page 5).";
+                    storyQuality += "It's a strong, well-researched story. A bit text-heavy, but good. **Grade: B+**";
                 }
-            } else {
+            } else if (coreScore === 1) { // Weak core story
+                if (gameState.research < assignment.researchNeeded) {
+                    storyQuality += "It has good quotes, but the background facts are weak. ";
+                } else {
+                    storyQuality += "It's well-researched, but lacks a human voice. No quotes! ";
+                }
+                
+                if (bonusScore > 0) {
+                    storyQuality += "The multimedia helps, but the story is flawed. **Grade: C+** (Buried on page 5).";
+                } else {
+                    storyQuality += "**Grade: C** (Buried on page 5).";
+                }
+            } else { // Bad core story
                 storyQuality += "It's thin, un-researched, and has no sources. The editor is not happy. **Grade: F** (Spiked).";
             }
 
             logMessage(storyQuality);
             
-            // Disable action buttons
-            document.getElementById('btn-research').disabled = true;
-            document.getElementById('btn-interview').disabled = true;
-            document.getElementById('btn-write').disabled = true;
-
-            // --- *** NEW CODE *** ---
-            // Get the action buttons container
+            // Disable all action buttons
+            const buttons = document.querySelectorAll('#action-buttons button');
+            buttons.forEach(button => button.disabled = true);
+            
+            // --- Add "Apply Now" and "Play Again" Buttons ---
             const actionButtonsDiv = document.getElementById('action-buttons');
 
-            // --- Add "Apply Now" Button ---
             const applyButton = document.createElement('button');
             applyButton.innerText = 'Apply Now!';
             applyButton.style.marginTop = '15px';
+            applyButton.disabled = false; // Re-enable this one
             applyButton.onclick = () => {
-                // Redirects to the DN application page
                 window.location.href = 'https://www.dailynebraskan.com/site/forms/online_services/apply/apply_to_the_dn/';
             };
             actionButtonsDiv.appendChild(applyButton);
 
-            // --- Add "Play Again" Button ---
             const playAgainButton = document.createElement('button');
             playAgainButton.innerText = 'Take New Assignment';
             playAgainButton.style.marginTop = '15px';
-            playAgainButton.classList.add('btn-secondary'); // Apply the gray secondary style
-            playAgainButton.onclick = () => location.reload(); // Simple page reload
+            playAgainButton.classList.add('btn-secondary');
+            playAgainButton.disabled = false; // Re-enable this one
+            playAgainButton.onclick = () => location.reload();
             actionButtonsDiv.appendChild(playAgainButton);
-            // --- *** END NEW CODE *** ---
         }
 
         // Updates the status bar (Time, Research, Interviews)
@@ -303,11 +454,23 @@
             document.getElementById('time-left').innerText = `Time Left: ${gameState.timeLeft} hours`;
             document.getElementById('research-level').innerText = `Research: ${gameState.research}`;
             document.getElementById('interview-level').innerText = `Interviews: ${gameState.interviews}`;
+            document.getElementById('photo-level').innerText = `Photos: ${gameState.photos}`;
+            document.getElementById('video-level').innerText = `Video: ${gameState.video}`;
+            document.getElementById('social-level').innerText = `Social: ${gameState.social}`;
 
             // Disable buttons if not enough time
             document.getElementById('btn-research').disabled = gameState.timeLeft < 2;
-            document.getElementById('btn-interview').disabled = gameState.timeLeft < 3;
-            document.getElementById('btn-write').disabled = gameState.timeLeft < 2;
+            document.getElementById('btn-interview').disabled = gameState.timeLeft < 1;
+            document.getElementById('btn-photo').disabled = gameState.timeLeft < 1;
+            document.getElementById('btn-video').disabled = gameState.timeLeft < 2;
+            document.getElementById('btn-social').disabled = gameState.timeLeft < 1;
+            document.getElementById('btn-nap').disabled = gameState.timeLeft < 2;
+            
+            // Special disable for coffee break (if taken or not enough time)
+            document.getElementById('btn-coffee').disabled = gameState.coffeeBreakTaken || gameState.timeLeft < 2;
+            
+            // --- NEW: Disable "Write Story" if time is too low OR no actions have been taken
+            document.getElementById('btn-write').disabled = gameState.timeLeft < 3 || gameState.actionsTaken === 0;
         }
 
         // Writes a message to the game log
