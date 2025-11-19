@@ -44,12 +44,12 @@
         .container {
             position: relative;
             width: 100%;
-            max-width: 900px; /* Max desktop width */
+            max-width: 900px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             border-radius: 8px;
-            user-select: none; /* Prevents highlighting images while dragging */
-            overflow: hidden; /* Keeps corners rounded */
-            line-height: 0; /* Fixes tiny white space under images */
+            user-select: none; 
+            overflow: hidden; 
+            line-height: 0; 
         }
 
         /* --- IMAGES --- */
@@ -57,28 +57,25 @@
             width: 100%;
             height: auto;
             display: block;
-            pointer-events: none; /* Prevents dragging the image file */
+            pointer-events: none; 
         }
 
-        /* The Bottom Image (2025) sits naturally in the flow */
+        /* The Bottom Image (2025) */
         .img-wrapper {
             width: 100%;
         }
 
-        /* The Top Image (1930) overlays the bottom one */
+        /* The Top Image (1930) - Gets Cropped */
         .img-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* This creates the crop effect. 
-               50% means we initially see half the image. */
             clip-path: inset(0 50% 0 0); 
             z-index: 1;
         }
         
-        /* Ensure the overlay image stretches exactly like the bottom one */
         .img-overlay img {
             width: 100%;
             height: 100%;
@@ -86,8 +83,6 @@
         }
 
         /* --- SLIDER CONTROLS --- */
-        
-        /* The Vertical Pink Line */
         .slider-line {
             position: absolute;
             top: 0;
@@ -96,20 +91,19 @@
             background: #ff1493; /* Deep Pink */
             left: 50%;
             z-index: 10;
-            transform: translateX(-50%); /* Centers line on the cursor */
+            transform: translateX(-50%); 
             pointer-events: none;
         }
 
-        /* The Round Handle */
         .slider-handle {
             position: absolute;
             height: 44px;
             width: 44px;
-            background: #ff1493; /* Deep Pink */
+            background: #ff1493; 
             border-radius: 50%;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%); /* Centers handle on the cursor */
+            transform: translate(-50%, -50%); 
             z-index: 11;
             box-shadow: 0 2px 6px rgba(0,0,0,0.4);
             display: flex;
@@ -118,16 +112,15 @@
             pointer-events: none;
         }
 
-        /* Arrows inside the handle */
         .slider-handle::after {
             content: '◀ ▶';
             color: white;
             font-size: 14px;
             font-weight: 800;
-            letter-spacing: -2px; /* Tightens the arrow spacing */
+            letter-spacing: -2px; 
         }
 
-        /* --- INPUT (THE INTERACTIVE LOGIC) --- */
+        /* The Logic Layer */
         input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
@@ -136,17 +129,17 @@
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 20; /* Sits on top of everything to catch clicks */
-            opacity: 0; /* Invisible */
+            z-index: 20; 
+            opacity: 0; 
             margin: 0;
-            cursor: ew-resize; /* Shows left-right arrow cursor */
+            cursor: ew-resize; 
         }
 
         /* --- LABELS --- */
         .label {
             position: absolute;
             top: 15px;
-            background: rgba(255, 20, 147, 0.85); /* Pink background with transparency */
+            background: rgba(255, 20, 147, 0.85); 
             color: white;
             padding: 6px 12px;
             border-radius: 4px;
@@ -156,9 +149,10 @@
             font-weight: bold;
             text-transform: uppercase;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: opacity 0.2s ease; /* Smooth fading effect */
         }
         .label-before { left: 15px; }
-        .label-after { right: 15px; background: rgba(0, 0, 0, 0.7); /* Black for the modern side */ }
+        .label-after { right: 15px; background: rgba(0, 0, 0, 0.7); }
 
     </style>
 </head>
@@ -170,8 +164,8 @@
     </header>
 
     <div class="container">
-        <div class="label label-before">1930</div>
-        <div class="label label-after">2025</div>
+        <div class="label label-before" id="label1930">1930</div>
+        <div class="label label-after" id="label2025">2025</div>
 
         <div class="img-wrapper">
             <img src="temple2025.jpg" alt="The Temple Building in 2025">
@@ -189,14 +183,33 @@
 
     <script>
         function moveSlider() {
+            // 1. Get values
             const sliderVal = document.getElementById("slider").value;
             const overlay = document.getElementById("overlay");
             const handle = document.getElementById("handle");
             const line = document.getElementById("line");
+            const label1930 = document.getElementById("label1930");
+            const label2025 = document.getElementById("label2025");
 
+            // 2. Move the crop and handle
             overlay.style.clipPath = `inset(0 ${100 - sliderVal}% 0 0)`;
             handle.style.left = sliderVal + "%";
             line.style.left = sliderVal + "%";
+
+            // 3. SMART LABELS LOGIC
+            // If slider is near the left (showing mostly 2025), hide the 1930 label
+            if (sliderVal < 10) {
+                label1930.style.opacity = "0";
+            } else {
+                label1930.style.opacity = "1";
+            }
+
+            // If slider is near the right (showing mostly 1930), hide the 2025 label
+            if (sliderVal > 90) {
+                label2025.style.opacity = "0";
+            } else {
+                label2025.style.opacity = "1";
+            }
         }
     </script>
 
