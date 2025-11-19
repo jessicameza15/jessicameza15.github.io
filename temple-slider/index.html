@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNL Temple Building Comparison</title>
+    <style>
+        /* --- GENERAL PAGE STYLES --- */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .instructions {
+            font-size: 0.9rem;
+            color: #666;
+            background-color: #ffebf0; /* Light Pink Background */
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 20px;
+            border: 1px solid #ffb6c1; /* Pastel Pink Border */
+            font-weight: 500;
+        }
+
+        /* --- SLIDER CONTAINER --- */
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 900px; /* Max desktop width */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            user-select: none; /* Prevents highlighting images while dragging */
+            overflow: hidden; /* Keeps corners rounded */
+            line-height: 0; /* Fixes tiny white space under images */
+        }
+
+        /* --- IMAGES --- */
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+            pointer-events: none; /* Prevents dragging the image file */
+        }
+
+        /* The Bottom Image (2025) sits naturally in the flow */
+        .img-wrapper {
+            width: 100%;
+        }
+
+        /* The Top Image (1930) overlays the bottom one */
+        .img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* This creates the crop effect. 
+               50% means we initially see half the image. */
+            clip-path: inset(0 50% 0 0); 
+            z-index: 1;
+        }
+        
+        /* Ensure the overlay image stretches exactly like the bottom one */
+        .img-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- SLIDER CONTROLS --- */
+        
+        /* The Vertical Pink Line */
+        .slider-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #ff1493; /* Deep Pink */
+            left: 50%;
+            z-index: 10;
+            transform: translateX(-50%); /* Centers line on the cursor */
+            pointer-events: none;
+        }
+
+        /* The Round Handle */
+        .slider-handle {
+            position: absolute;
+            height: 44px;
+            width: 44px;
+            background: #ff1493; /* Deep Pink */
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Centers handle on the cursor */
+            z-index: 11;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        /* Arrows inside the handle */
+        .slider-handle::after {
+            content: '◀ ▶';
+            color: white;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: -2px; /* Tightens the arrow spacing */
+        }
+
+        /* --- INPUT (THE INTERACTIVE LOGIC) --- */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 20; /* Sits on top of everything to catch clicks */
+            opacity: 0; /* Invisible */
+            margin: 0;
+            cursor: ew-resize; /* Shows left-right arrow cursor */
+        }
+
+        /* --- LABELS --- */
+        .label {
+            position: absolute;
+            top: 15px;
+            background: rgba(255, 20, 147, 0.85); /* Pink background with transparency */
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            pointer-events: none;
+            z-index: 15;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .label-before { left: 15px; }
+        .label-after { right: 15px; background: rgba(0, 0, 0, 0.7); /* Black for the modern side */ }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Check out the changes to UNL's Temple Building from 1930-2025</h1>
+        <div class="instructions">Swipe the pink slider to compare eras</div>
+    </header>
+
+    <div class="container">
+        <div class="label label-before">1930</div>
+        <div class="label label-after">2025</div>
+
+        <div class="img-wrapper">
+            <img src="temple2025.jpg" alt="The Temple Building in 2025">
+        </div>
+
+        <div class="img-overlay" id="overlay">
+            <img src="temple1930.jpg" alt="The Temple Building in 1930">
+        </div>
+
+        <div class="slider-line" id="line"></div>
+        <div class="slider-handle" id="handle"></div>
+
+        <input type="range" min="0" max="100" value="50" id="slider" oninput="moveSlider()">
+    </div>
+
+    <script>
+        function moveSlider() {
+            const sliderVal = document.getElementById("slider").value;
+            const overlay = document.getElementById("overlay");
+            const handle = document.getElementById("handle");
+            const line = document.getElementById("line");
+
+            overlay.style.clipPath = `inset(0 ${100 - sliderVal}% 0 0)`;
+            handle.style.left = sliderVal + "%";
+            line.style.left = sliderVal + "%";
+        }
+    </script>
+
+</body>
+</html>
