@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Juxtapose Slider</title>
+    <title>UNL School of Music: 2014 vs 2025</title>
     
     <style>
-        /* 1. Basic body styling */
+        /* 1. Basic body & page styling */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: grid;
@@ -14,60 +14,79 @@
             min-height: 100vh;
             background-color: #f0f0f0;
             padding: 2rem;
+            margin: 0;
+            box-sizing: border-box;
         }
 
-        /* 2. The main container */
+        .page-wrapper {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .page-wrapper h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-wrapper p.instructions {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 2. The main slider container */
         .comparison-slider {
-            /* This is the key: it's a "relative" positioning context */
             position: relative;
             width: 100%;
-            max-width: 800px;
-            overflow: hidden; /* Hides any parts of the image that go outside */
+            overflow: hidden;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            cursor: ew-resize; /* Indicates horizontal sliding */
+            cursor: ew-resize;
         }
 
         /* 3. The "Before" (bottom) image */
         .image-before {
-            display: block; /* Removes any bottom spacing */
+            display: block;
             width: 100%;
             height: auto;
         }
 
-        /* 4. The "After" (top) image */
-        .image-after {
-            /* Sits perfectly on top of the "before" image */
+        /* 4. The wrapper for the "After" (top) image */
+        .image-after-wrapper {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures image covers the container */
-            
-            /* * THE MAGIC: This clips the image to a polygon.
-             * We're only showing the left 50% (from 0% to 50%)
-             * JavaScript will change these 50% values.
-             */
+            overflow: hidden;
             clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
         }
 
-        /* 5. The slider line */
+        /* 5. The "After" (top) image */
+        .image-after {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: relative; 
+        }
+
+        /* 6. The slider line */
         .slider-line {
             position: absolute;
             top: 0;
             bottom: 0;
             width: 4px;
             background-color: #ffffff;
-            /* Start at the 50% mark */
             left: 50%;
-            /* Offset by half its own width to be perfectly centered */
             transform: translateX(-50%);
-            /* Prevents the line from interfering with mouse events on the container */
             pointer-events: none;
         }
 
-        /* 6. The slider handle (the circle) */
+        /* 7. The slider handle (the circle) */
         .slider-handle {
             position: absolute;
             top: 50%;
@@ -75,18 +94,13 @@
             height: 50px;
             background-color: #ffffff;
             border-radius: 50%;
-            /* Center it on the line and vertically */
             transform: translate(-50%, -50%);
-            
-            /* Simple arrows using borders */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             display: grid;
             place-items: center;
-            font-size: 1.5rem;
-            color: #333;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
-        /* Using pseudo-elements for arrows for a cleaner look */
+        /* 8. The arrows inside the handle */
         .slider-handle::before,
         .slider-handle::after {
             content: '';
@@ -96,113 +110,123 @@
             border-style: solid;
         }
         
-        /* Left arrow */
         .slider-handle::before {
             left: 10px;
             border-width: 8px 10px 8px 0;
             border-color: transparent #555 transparent transparent;
         }
         
-        /* Right arrow */
         .slider-handle::after {
             right: 10px;
             border-width: 8px 0 8px 10px;
             border-color: transparent transparent transparent #555;
         }
 
+        /* 9. Year Labels */
+        .slider-label {
+            position: absolute;
+            top: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.875rem;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .label-before {
+            right: 1rem; 
+        }
+        
+        .label-after {
+            left: 1rem; 
+        }
+
+        /* 10. NEW: Caption Styling */
+        .slider-caption {
+            font-size: 0.875rem;
+            color: #777;
+            font-style: italic;
+            margin-top: 1rem;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="comparison-slider" id="slider-container">
+    <div class="page-wrapper">
         
-        <img class="image-before" 
-             src="https://placehold.co/800x450/313131/eeeeee?text=BEFORE" 
-             alt="Before Image">
+        <h1>Check out the changes to UNL's school of music from 2014-2025</h1>
         
-        <img class="image-after" 
-             src="https://placehold.co/800x450/1c72b8/ffffff?text=AFTER" 
-             alt="After Image">
-        
-        <div class="slider-line" id="slider-line">
-            <div class="slider-handle"></div>
-        </div>
+        <p class="instructions">Click (or tap) and drag the handle to swipe between the 2014 and 2025 images.</p>
 
-    </div>
+        <div class="comparison-slider" id="slider-container">
+            
+            <img class="image-before" 
+                 src="PASTE_YOUR_2014_BASE64_CODE_HERE" 
+                 alt="Aerial view of UNL campus in October 2014, showing a parking lot.">
+            
+            <div class="slider-label label-before">2014</div>
+            
+            <div class="image-after-wrapper" id="image-after-wrapper">
+                <img class="image-after" 
+                     src="PASTE_YOUR_2025_BASE64_CODE_HERE" 
+                     alt="Aerial view of UNL campus in March 2025, showing the new music building.">
+                
+                <div class="slider-label label-after">2025</div>
+            </div>
+            
+            <div class="slider-line" id="slider-line">
+                <div class="slider-handle"></div>
+            </div>
 
-    <script>
+        </div> <p class="slider-caption">
+            Aerial photos courtesy of Google Earth.
+        </p>
+
+    </div> <script>
         const container = document.getElementById('slider-container');
-        const imageAfter = container.querySelector('.image-after');
-        const sliderLine = container.querySelector('#slider-line');
-        
-        // This flag will track if we are "dragging"
+        const imageAfterWrapper = document.getElementById('image-after-wrapper'); 
+        const sliderLine = document.getElementById('slider-line');
         let isDragging = false;
 
-        // Function to update the slider position
         function updateSlider(x) {
-            // Get the container's bounding box
             const rect = container.getBoundingClientRect();
-            
-            // Calculate the position as a percentage
-            // 'x' is the mouse/touch X coordinate
-            // 'rect.left' is the container's left edge
-            // 'rect.width' is the container's total width
             let position = ((x - rect.left) / rect.width) * 100;
-
-            // Clamp the position between 0% and 100%
             position = Math.max(0, Math.min(100, position));
-
-            // Update the CSS
-            imageAfter.style.clipPath = `polygon(0 0, ${position}% 0, ${position}% 100%, 0 100%)`;
+            imageAfterWrapper.style.clipPath = `polygon(0 0, ${position}% 0, ${position}% 100%, 0 100%)`;
             sliderLine.style.left = `${position}%`;
         }
 
-        // --- Event Listeners ---
-
-        // 1. On "mouse down" (or "touch start")
         function onDragStart(e) {
-            // Prevent default browser behavior (like image dragging)
             e.preventDefault();
-            
-            // Set the dragging flag to true
             isDragging = true;
-            
-            // Get the initial X position
             const x = e.clientX || (e.touches && e.touches[0].clientX);
             if (x !== undefined) {
                 updateSlider(x);
             }
         }
 
-        // 2. On "mouse up" (or "touch end")
         function onDragEnd() {
             isDragging = false;
         }
 
-        // 3. On "mouse move" (or "touch move")
         function onDragMove(e) {
-            // Only run if we are currently dragging
             if (!isDragging) return;
-            
-            // Get the current X position
             const x = e.clientX || (e.touches && e.touches[0].clientX);
             if (x !== undefined) {
                 updateSlider(x);
             }
         }
         
-        // --- Attach Listeners ---
-
-        // Mouse events
         container.addEventListener('mousedown', onDragStart);
         window.addEventListener('mouseup', onDragEnd);
         window.addEventListener('mousemove', onDragMove);
-
-        // Touch events for mobile
-        container.addEventListener('touchstart', onDragStart, { passive: false }); // Use passive: false to allow preventDefault
+        container.addEventListener('touchstart', onDragStart, { passive: false });
         window.addEventListener('touchend', onDragEnd);
         window.addEventListener('touchmove', onDragMove);
-
     </script>
 
 </body>
