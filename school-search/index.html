@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Searchable database of chronic absenteeism rates for Nebraska school districts.">
+    <title>Find Your District's Chronic Absentee Rate</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- External Libraries (CDNs) -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="main-header">
+            <h1>Find Your District's Chronic Absentee Rate</h1>
+            <p class="subtitle">Explore chronic absenteeism data for Nebraska school districts over recent years.</p>
+        </header>
+
+        <main>
+            <section class="search-section">
+                <div class="search-container">
+                    <input type="text" id="districtSearch" placeholder="Search for a school district..." autocomplete="off">
+                    <div id="searchResults" class="search-results hidden"></div>
+                </div>
+            </section>
+
+            <section id="resultSection" class="result-section hidden">
+                <div class="district-info">
+                    <h2 id="districtNameDisplay">District Name</h2>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="absenteeismChart"></canvas>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>School Year</th>
+                                <th>Chronic Absentee Rate (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <!-- Data rows will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer class="main-footer">
+            <p>Data Source: Nebraska Department of Education</p>
+        </footer>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+</html>
